@@ -1,0 +1,77 @@
+import { sql } from "drizzle-orm";
+import {
+  boolean,
+  char,
+  integer,
+  pgEnum,
+  pgTable,
+  primaryKey,
+  real,
+  text,
+  timestamp,
+  varchar,
+} from "drizzle-orm/pg-core";
+import { STRING_LONG_LENGTH, STRING_SHORT_LENGTH } from "../const";
+import { Users } from "./user";
+
+export const MAP_VISIBILITY_TYPES = ["PUBLIC", "UNLISTED"] as const;
+
+export const MAP_CATEGORIES = ["CSS", "SPEED_SHIFT", "CASE_SENSITIVE"] as const;
+export const categoryEnum = pgEnum("category", MAP_CATEGORIES);
+export const YOUTUBE_THUMBNAIL_QUALITIES = ["mqdefault", "maxresdefault"] as const;
+export const thumbnailQualityEnum = pgEnum("thumbnail_quality", YOUTUBE_THUMBNAIL_QUALITIES);
+export const mapVisibilityEnum = pgEnum("map_visibility", MAP_VISIBILITY_TYPES);
+export const Maps = pgTable("maps", {
+  id: integer("id").primaryKey(),
+  videoId: char("video_id", { length: 11 }).notNull(),
+  title: varchar("title", { length: STRING_SHORT_LENGTH }).notNull(),
+  artistName: varchar("artist_name", { length: STRING_SHORT_LENGTH }).notNull(),
+  musicSource: varchar("music_source", { length: STRING_SHORT_LENGTH }).notNull(),
+  creatorComment: varchar("creator_comment", { length: STRING_LONG_LENGTH }).notNull(),
+  tags: text("tags").array().notNull().default(sql`ARRAY[]::text[]`),
+  creatorId: integer("creator_id")
+    .notNull()
+    .references(() => Users.id),
+  previewTime: real("preview_time").notNull().default(0),
+  duration: real("duration").notNull().default(0),
+  playCount: integer("play_count").notNull().default(0),
+  likeCount: integer("like_count").notNull().default(0),
+  rankingCount: integer("ranking_count").notNull().default(0),
+  category: categoryEnum("category").array().notNull().default(sql`ARRAY[]::category[]`),
+  thumbnailQuality: thumbnailQualityEnum("thumbnail_quality").notNull().default("mqdefault"),
+  publishedAt: timestamp("published_at", { mode: "date" }),
+  createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+  visibility: mapVisibilityEnum("visibility").notNull(),
+  // リプレイデータに影響が出る変更があった場合に更新される
+  updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
+});
+
+export const MapDifficulties = pgTable("map_difficulties", {
+  mapId: integer("map_id")
+    .primaryKey()
+    .references(() => Maps.id, { onDelete: "cascade" }),
+  romaKpmMedian: integer("roma_kpm_median").notNull().default(0),
+  romaKpmMax: integer("roma_kpm_max").notNull().default(0),
+  kanaKpmMedian: integer("kana_kpm_median").notNull().default(0),
+  kanaKpmMax: integer("kana_kpm_max").notNull().default(0),
+  romaTotalNotes: integer("roma_total_notes").notNull().default(0),
+  kanaTotalNotes: integer("kana_total_notes").notNull().default(0),
+  englishTotalNotes: integer("english_total_notes").notNull().default(0),
+  symbolTotalNotes: integer("symbol_total_notes").notNull().default(0),
+  intTotalNotes: integer("int_total_notes").notNull().default(0),
+});
+
+export const MapLikes = pgTable(
+  "map_likes",
+  {
+    userId: integer("user_id")
+      .notNull()
+      .references(() => Users.id, { onDelete: "cascade" }),
+    mapId: integer("map_id")
+      .notNull()
+      .references(() => Maps.id, { onDelete: "cascade" }),
+    hasLiked: boolean("has_liked").notNull(),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.mapId] })],
+);
