@@ -1,0 +1,13 @@
+{
+  "extraKnownMarketplaces": {
+    "hono-skill": {
+      "source": {
+        "source": "github",
+        "repo": "yusukebe/hono-skill"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "hono-skill@hono-skill": true
+  }
+}
