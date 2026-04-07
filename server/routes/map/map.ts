@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import mapListRoute from "./list";
 
-const mapRoute = new Hono().route("/", mapListRoute);
+const maps = new Hono().route("/", mapListRoute);
 
-export default mapRoute;
+export default maps;

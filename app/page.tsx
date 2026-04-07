@@ -1,4 +1,4 @@
-import { MapList } from "@/components/map/MapList";
+import { MapList } from "@/features/map/map-list";
 
 export default function Home() {
   return (

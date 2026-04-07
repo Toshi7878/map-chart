@@ -1,7 +1,9 @@
 import { Hono } from "hono";
-import mapRoute from "./routes/map/map";
+import maps from "./routes/map/map";
 
-const app = new Hono().basePath("/api").route("/maps", mapRoute);
+const app = new Hono();
+
+const routes = app.basePath("/api").route("/maps", maps);
 
 export default app;
-export type AppType = typeof app;
+export type AppType = typeof routes;
