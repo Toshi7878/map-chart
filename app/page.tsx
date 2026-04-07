@@ -1,20 +1,10 @@
-'use client'
-import { useEffect, useState } from 'react'
-
+import { MapList } from "@/components/map/MapList";
 
 export default function Home() {
-  const [message, setMessage] = useState()
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await fetch('/api/hello')
-      const { message } = await res.json()
-      setMessage(message)
-    }
-    fetchData()
-  }, [])
-
-  if (!message) return <p>Loading...</p>
-
-  return <p>{message}</p>
+  return (
+    <main className="mx-auto max-w-2xl p-4">
+      <h1 className="mb-4 font-bold text-2xl">Maps</h1>
+      <MapList />
+    </main>
+  );
 }

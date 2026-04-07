@@ -40,7 +40,6 @@
       },
       "style": {
         "noCommonJs": "error",
-        "noDefaultExport": "error",
         "noNamespace": "error",
         "useAsConstAssertion": "error",
         "noDoneCallback": "error",
@@ -71,18 +70,6 @@
       }
     }
   },
-  "overrides": [
-    {
-      "includes": ["**/layout.tsx", "**/page.tsx", "**/loading.tsx", "**/error.tsx", "**/not-found.tsx"],
-      "linter": {
-        "rules": {
-          "style": {
-            "noDefaultExport": "off"
-          }
-        }
-      }
-    }
-  ],
   "css": {
     "parser": {
       "tailwindDirectives": true
