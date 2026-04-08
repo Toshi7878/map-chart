@@ -3,6 +3,8 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import type { InferResponseType } from "hono/client";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { KpmLineChart } from "@/components/ui/kpm-line-chart";
 import { type Api, client } from "@/lib/client";
 
 export function MapList() {
@@ -31,7 +33,7 @@ export function MapList() {
 
   return (
     <div>
-      <ul className="flex flex-col gap-2">
+      <ul className="grid grid-cols-2 gap-2">
         {maps.map((map) => (
           <MapCard key={map.id} map={map} />
         ))}
@@ -46,15 +48,26 @@ export function MapList() {
 
 function MapCard({ map }: { map: InferResponseType<Api["maps"]["$get"]>["items"][number] }) {
   return (
-    <li className="flex items-start gap-4 rounded-lg border p-4">
-      <div className="flex flex-col gap-1">
-        <p className="font-semibold">{map.info.title}</p>
-        <p className="text-muted-foreground text-sm">{map.info.artistName}</p>
+    <li className="flex gap-3 rounded-lg border p-2">
+      <div className="w-28 shrink-0">
+        <AspectRatio ratio={16 / 9}>
+          <img
+            src={`https://img.youtube.com/vi/${map.media.videoId}/mqdefault.jpg`}
+            alt={map.info.title}
+            className="size-full rounded object-cover"
+          />
+        </AspectRatio>
+      </div>
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <p className="truncate text-sm font-semibold">{map.info.title}</p>
+        <p className="text-muted-foreground truncate text-xs">{map.info.artistName}</p>
         <div className="flex gap-2 text-muted-foreground text-xs">
           <span>Like: {map.like.count}</span>
           <span>Ranking: {map.ranking.count}</span>
         </div>
+        <KpmLineChart mapJson={map.mapJson} />
       </div>
     </li>
   );
 }
+
