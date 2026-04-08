@@ -3,7 +3,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import type { InferResponseType } from "hono/client";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import { client } from "@/lib/client";
+import { type Api, client } from "@/lib/client";
 
 export function MapList() {
   const { ref, inView } = useInView();
@@ -44,7 +44,7 @@ export function MapList() {
   );
 }
 
-function MapCard({ map }: { map: InferResponseType<typeof client.api.maps.$get>["items"][number] }) {
+function MapCard({ map }: { map: InferResponseType<Api["maps"]["$get"]>["items"][number] }) {
   return (
     <li className="flex items-start gap-4 rounded-lg border p-4">
       <div className="flex flex-col gap-1">

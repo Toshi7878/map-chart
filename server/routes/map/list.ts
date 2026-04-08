@@ -4,7 +4,7 @@ import { alias, type PgSelectQueryBuilder, type SelectedFields } from "drizzle-o
 import { Hono } from "hono";
 import z from "zod";
 import { db, schema } from "@/db/client";
-import { useScrollPagination } from "@/server/pagination";
+import { useScrollPagination } from "@/server/utils/pagination";
 
 const { MapDifficulties, Maps, Users } = schema;
 const Creator = alias(Users, "creator");

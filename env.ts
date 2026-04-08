@@ -3,9 +3,6 @@ import { createEnv } from "@t3-oss/env-nextjs";
 import { vercel } from "@t3-oss/env-nextjs/presets-zod";
 import { z } from "zod/v4";
 
-const isVercel = Boolean(process.env.VERCEL);
-const isProduction = Boolean(process.env.VERCEL_ENV === "production");
-
 export const env = createEnv({
   extends: [vercel()],
 
