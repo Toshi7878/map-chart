@@ -11,7 +11,7 @@ export function MapList() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isPending, isError } = useInfiniteQuery({
     queryKey: ["maps"],
     queryFn: async ({ pageParam = 0 }: { pageParam?: number }) => {
-      const res = await client.api.maps.$get({ query: { cursor: pageParam === 0 ? undefined : String(pageParam) } });
+      const res = await client.api.maps.$get({ query: { cursor: pageParam } });
       return res.json();
     },
     initialPageParam: 0,

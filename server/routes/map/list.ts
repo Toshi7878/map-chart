@@ -11,7 +11,7 @@ const Creator = alias(Users, "creator");
 
 const mapListRoute = new Hono().get(
   "/",
-  zValidator("query", z.object({ cursor: z.coerce.number().optional() })),
+  zValidator("query", z.object({ cursor: z.number().optional() })),
   async (c) => {
     const { cursor } = c.req.valid("query");
 

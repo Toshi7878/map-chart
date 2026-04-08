@@ -3,6 +3,7 @@ import {
   boolean,
   char,
   integer,
+  json,
   pgEnum,
   pgTable,
   primaryKey,
@@ -11,6 +12,7 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
+import type { BuiltMapLine } from "lyrics-typing-engine";
 import { STRING_LONG_LENGTH, STRING_SHORT_LENGTH } from "../const";
 import { Users } from "./user";
 
@@ -44,6 +46,7 @@ export const Maps = pgTable("maps", {
   visibility: mapVisibilityEnum("visibility").notNull(),
   // リプレイデータに影響が出る変更があった場合に更新される
   updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
+  mapJson: json("map_json").$type<BuiltMapLine>(),
 });
 
 export const MapDifficulties = pgTable("map_difficulties", {
