@@ -60,6 +60,7 @@ const buildBaseSelect = () =>
     ranking: {
       count: Maps.rankingCount,
     },
+    mapJson: Maps.mapJson,
   }) satisfies SelectedFields;
 
 const buildBaseQuery = <T extends PgSelectQueryBuilder>(query: T) => {
