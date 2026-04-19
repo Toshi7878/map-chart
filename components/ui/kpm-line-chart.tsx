@@ -1,11 +1,9 @@
 "use client";
 
 import type { BuiltMapLine } from "lyrics-typing-engine";
-import { useState } from "react";
-import { Line, LineChart, XAxis, YAxis } from "recharts";
+import { Bar, ComposedChart, Line, XAxis, YAxis } from "recharts";
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import type { ChartMode } from "@/features/map/search-params";
 
 const chartConfig = {
   roma: {
@@ -16,16 +14,18 @@ const chartConfig = {
     label: "Kana KPM",
     color: "var(--color-muted-foreground)",
   },
+  notes: {
+    label: "打鍵数",
+    color: "var(--color-primary)",
+  },
 } satisfies ChartConfig;
-
-type DisplayMode = "both" | "roma" | "kana";
 
 interface KpmLineChartProps {
   mapJson: BuiltMapLine | BuiltMapLine[] | null | undefined;
+  mode: ChartMode;
 }
 
-export function KpmLineChart({ mapJson }: KpmLineChartProps) {
-  const [mode, setMode] = useState<DisplayMode>("both");
+export function KpmLineChart({ mapJson, mode }: KpmLineChartProps) {
 
   if (!mapJson) return null;
 
@@ -38,44 +38,36 @@ export function KpmLineChart({ mapJson }: KpmLineChartProps) {
       index,
       roma: line.kpm.roma,
       kana: line.kpm.kana,
+      notesRoma: line.notes.roma,
+      notesKana: line.notes.kana,
     }));
 
+  const notesKey = mode === "kana" ? "notesKana" : "notesRoma";
+
   return (
-    <div className="flex flex-col gap-2">
-      <RadioGroup value={mode} onValueChange={(v) => setMode(v as DisplayMode)} className="flex gap-4">
-        <div className="flex items-center gap-1.5">
-          <RadioGroupItem value="both" id="both" />
-          <Label htmlFor="both">Both</Label>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <RadioGroupItem value="roma" id="roma" />
-          <Label htmlFor="roma">Roma</Label>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <RadioGroupItem value="kana" id="kana" />
-          <Label htmlFor="kana">Kana</Label>
-        </div>
-      </RadioGroup>
-      <ChartContainer config={chartConfig} className="min-h-[60px] w-full">
-        <LineChart data={data} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
-          <XAxis dataKey="index" hide />
-          <YAxis domain={[0, 1000]} />
+    <ChartContainer config={chartConfig} className="min-h-[60px] w-full">
+        <ComposedChart data={data} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
+          <XAxis dataKey="index" label={{ value: "行", position: "insideBottomRight", offset: 0, fontSize: 10 }} tick={false} />
+          <YAxis yAxisId="kpm" domain={[0, 1000]} allowDataOverflow />
+          <YAxis yAxisId="notes" orientation="right" hide />
           <ChartTooltip content={<ChartTooltipContent />} />
+          <Bar yAxisId="notes" dataKey={notesKey} fill="var(--color-primary)" opacity={0.15} isAnimationActive={false} />
           {(mode === "both" || mode === "roma") && (
-            <Line type="monotone" dataKey="roma" stroke="var(--color-primary)" dot={false} strokeWidth={1.5} />
+            <Line yAxisId="kpm" type="monotone" dataKey="roma" stroke="var(--color-primary)" dot={{ r: 2 }} strokeWidth={1.5} isAnimationActive={false} />
           )}
           {(mode === "both" || mode === "kana") && (
             <Line
+              yAxisId="kpm"
               type="monotone"
               dataKey="kana"
               stroke="var(--color-muted-foreground)"
-              dot={false}
+              dot={{ r: 2 }}
               strokeWidth={1.5}
               strokeDasharray="4 2"
+              isAnimationActive={false}
             />
           )}
-        </LineChart>
-      </ChartContainer>
-    </div>
+        </ComposedChart>
+    </ChartContainer>
   );
 }
